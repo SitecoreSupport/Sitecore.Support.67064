@@ -1,10 +1,11 @@
 ﻿using Sitecore.Forms.Mvc.TypeConverters;
+using Sitecore.Forms.Mvc.ViewModels;
 using Sitecore.WFFM.Abstractions.Actions;
 using System;
 using System.ComponentModel;
 using System.Globalization;
 
-namespace Sitecore.Forms.Mvc.ViewModels.Fields
+namespace Sitecore.Support.Forms.Mvc.ViewModels.Fields
 {
   public class DatePickerField : ValuedFieldViewModel<string>
   {
@@ -16,7 +17,7 @@ namespace Sitecore.Forms.Mvc.ViewModels.Fields
       }
       set
       {
-        base.Value = (DateUtil.IsIsoDate(value) ? DateUtil.IsoDateToDateTime(value).ToString(this.DateFormat ?? "yy-MM-dd") : value);
+        base.Value = (DateUtil.IsIsoDate(value) ? DateUtil.IsoDateToDateTime(value).ToString(this.DateFormat ?? "yy-MM-dd", new CultureInfo(Sitecore.Context.Language.CultureInfo.TwoLetterISOLanguageName)) : value);
       }
     }
 
@@ -51,13 +52,13 @@ namespace Sitecore.Forms.Mvc.ViewModels.Fields
     {
       if (string.IsNullOrEmpty(this.Value))
       {
-        this.Value = DateTime.Now.ToString(this.DateFormat);
+        this.Value = DateTime.Now.ToString(this.DateFormat, new CultureInfo(Sitecore.Context.Language.CultureInfo.TwoLetterISOLanguageName));
       }
     }
 
     public override ControlResult GetResult()
     {
-      return new ControlResult(base.FieldItemId, this.Title, DateUtil.ToIsoDate(DateTime.ParseExact(this.Value, this.DateFormat, DateTimeFormatInfo.InvariantInfo)), this.ResultParameters, false);
+      return new ControlResult(base.FieldItemId, this.Title, DateUtil.ToIsoDate(DateTime.ParseExact(this.Value, this.DateFormat, new CultureInfo(Sitecore.Context.Language.CultureInfo.TwoLetterISOLanguageName))), this.ResultParameters, false);
     }
   }
 }

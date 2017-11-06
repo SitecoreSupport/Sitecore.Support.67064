@@ -1,29 +1,45 @@
 ﻿@using Sitecore.Form.Web.UI.Controls
 @using Sitecore.Forms.Mvc.Html
-@model Sitecore.Forms.Mvc.ViewModels.Fields.DatePickerField
+@model Sitecore.Support.Forms.Mvc.ViewModels.Fields.DatePickerField
 
 @using (Html.BeginField())
 {
+    /*Sitecore.Support.67064*/
+    @Html.RenderScriptBlock(
+    @<script src="~/sitecore modules/Web/Web Forms for Marketers/mvc/libs/jquery/jquery-2.1.3.min.js"></script>)
+    @Html.RenderScriptBlock(
+    @<script src="~/sitecore modules/Web/Web Forms for Marketers/scripts/jquery-ui.min.js"></script>)
+    @Html.RenderScriptBlock(
+    @<script src="~/sitecore modules/Web/Web Forms for Marketers/scripts/jquery-ui-i18n.js"></script>)
+
+
+    string twoLetterISOLanguageName = Sitecore.Context.Language.CultureInfo.TwoLetterISOLanguageName;
+
     @Html.RenderScriptBlock(
     @<script type="text/javascript">
-             if (typeof window.WffmFieldsData === 'undefined') {
-                 window.WffmFieldsData = {}
-             }
 
-             window.WffmFieldsData["@Html.IdFor(x => Model.Value)"] =
-             {
-                 'defaultDate': new Date('@Model.Value'),
-                 'dateFormat': '@ClientDateFormatConverter.ConvertToClientFormat(Model.DateFormat)',
-                 'minDate': new Date('@Model.StartDate.Year', '@(Model.StartDate.Month - 1)', '@Model.StartDate.Day'),
-                 'maxDate': new Date('@Model.EndDate.Year', '@(Model.EndDate.Month - 1)', '@Model.EndDate.Day'),
-             };
+		 if (typeof ($scw) === "undefined") {
+			window.$scw = jQuery.noConflict(true);
+		}
+		$scw(document).ready(function () {
+			$scw(".form-control.datepicker").datepicker(
+				$scw.extend(
+					$scw.datepicker.regional['@twoLetterISOLanguageName'],
+					{
+						'defaultDate': new Date('@Model.Value'),
+						'dateFormat': '@ClientDateFormatConverter.ConvertToClientFormat(Model.DateFormat)',
+						'minDate': new Date('@Model.StartDate.Year', '@(Model.StartDate.Month - 1)', '@Model.StartDate.Day'),
+						'maxDate': new Date('@Model.EndDate.Year', '@(Model.EndDate.Month - 1)', '@Model.EndDate.Day'),
+					}))
+			});
+		});
     </script>)
 
     @Html.Editor("Value", null, new
-{
-    htmlAttributes = new
     {
-        @class = "form-control datepicker"
-    }
-})
+        htmlAttributes = new
+        {
+            @class = "form-control datepicker"
+        }
+    })
 }
